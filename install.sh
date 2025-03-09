@@ -189,6 +189,18 @@ find_existing_awscli_installation() {
   2>/dev/null which aws && return 0
 }
 
+pip_installed() {
+  &>/dev/null which pip3
+}
+
+install_pip() {
+  python3 -m ensurepip --upgrade
+}
+
+ensure_macos() {
+  test "$(uname)" == "Darwin"
+}
+
 if help_requested "$@"
 then
   usage
@@ -203,6 +215,12 @@ then
 fi
 
 version=$(get_arg_value "(-v|--version)" "$@")
+
+if ! pip_installed
+then
+  log_info "Installing pip"
+  install_pip
+fi
 
 log_info "Fetching AWS CLI versions (this might take a few seconds)"
 versions=$(get_awscli_versions)
