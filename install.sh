@@ -202,6 +202,66 @@ ensure_macos() {
   test "$(uname)" == "Darwin"
 }
 
+show_install_complete_message() {
+  if installed_awscli_matches_system_awscli
+  then
+    log_info "AWS CLI installed! Run 'aws' to get started."
+    return 0
+  elif asdf_installed
+  then
+    log_info "AWS CLI installed; run 'asdf reshim python' to apply changes, then run 'aws' to get started."
+    return 0
+  elif awscli_bin_dir_not_in_path
+  then
+    message="$(cat <<-EOF
+AWS CLI installed successfully!
+
+Run the command below to ensure that your terminal can find the correct version of 'aws'
+on startup.
+
+echo 'export PATH="$(_aws_cli_install_directory);\$PATH"' >> \$HOME/.bash_profile
+
+Afterwards, restart your terminal and run 'aws' to get started.
+EOF
+  )"
+    echo "$message" |
+    while read -r line
+    do log_info "$line"
+    done
+  else
+    message="$(cat <<-EOF
+AWS CLI installed successfully!
+
+Run the command below to ensure that your terminal can find the correct version of 'aws'
+on startup.
+
+echo 'alias aws=$(_aws_cli_install_directory)/aws' >> \$HOME/.bash_profile
+
+Afterwards, restart your terminal and run 'aws' to get started.
+EOF
+  )"
+    echo "$message" |
+    while read -r line
+    do log_info "$line"
+    done
+  fi
+}
+
+show_aws_completer_tip() {
+  message=$(cat <<-EOF
+(Bonus tip: Run the below to enable tab completion:
+
+echo 'complete -C "$(_aws_cli_install_directory)/aws_completer" aws' >> \$HOME/.bash_profile
+
+Restart your terminal to have the changes take effect.)
+EOF
+)
+  echo "$message" |
+  while read -r line
+  do log_info "$line"
+  done
+}
+
 if help_requested "$@"
 then
   usage
@@ -258,45 +318,5 @@ extract_release "$version"
 log_info "Installing AWS CLI (this might take a few minutes)"
 install_awscli "$version"
 
-if installed_awscli_matches_system_awscli
-then
-  log_info "AWS CLI installed! Run 'aws' to get started."
-  exit 0
-elif asdf_installed
-then
-  log_info "AWS CLI installed; run 'asdf reshim python' to apply changes, then run 'aws' to get started."
-  exit 0
-elif awscli_bin_dir_not_in_path
-then
-  message="$(cat <<-EOF
-AWS CLI installed successfully!
-
-Run the command below to ensure that your terminal can find the correct version of 'aws'
-on startup.
-
-echo 'export PATH="$(_aws_cli_install_directory);\$PATH"' >> \$HOME/.bash_profile
-
-Afterwards, restart your terminal and run 'aws' to get started.
-EOF
-)"
-  echo "$message" |
-  while read -r line
-  do log_info "$line"
-  done
-else
-  message="$(cat <<-EOF
-AWS CLI installed successfully!
-
-Run the command below to ensure that your terminal can find the correct version of 'aws'
-on startup.
-
-echo 'alias aws=$(_aws_cli_install_directory)/aws' >> \$HOME/.bash_profile
-
-Afterwards, restart your terminal and run 'aws' to get started.
-EOF
-)"
-  echo "$message" |
-  while read -r line
-  do log_info "$line"
-  done
-fi
+show_install_complete_message
+show_aws_completer_tip
