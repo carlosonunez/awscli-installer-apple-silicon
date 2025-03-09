@@ -253,7 +253,6 @@ test -z "$version" && version=$(tail -1 <<< "$versions")
 log_info "Downloading AWS CLI v$version"
 make_install_dir "$version"
 download_release_at_version "$version"
-trap 'rc=$?; clean; exit $rc' INT HUP EXIT
 extract_release "$version"
 
 log_info "Installing AWS CLI (this might take a few minutes)"
