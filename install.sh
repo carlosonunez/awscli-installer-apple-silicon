@@ -186,7 +186,8 @@ find_existing_awscli_installation() {
     echo "$want"
     return 0
   fi
-  2>/dev/null which aws && return 0
+  2>/dev/null which aws
+  return 0
 }
 
 pip_installed() {
