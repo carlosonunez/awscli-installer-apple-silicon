@@ -8,13 +8,12 @@ https://raw.githubusercontent.com/carlosonunez/aws-cli-installer-for-apple-silco
 | bash
 ```
 
-You can also install a specific version if you'd like
+You can also install a specific version of the AWS CLI, if you'd like:
 
 ```sh
-VERSION="foo"
 curl
-https://raw.githubusercontent.com/carlosonunez/aws-cli-installer-for-apple-silcon/ref/tags/$VERSION/install.sh
-| bash
+https://raw.githubusercontent.com/carlosonunez/aws-cli-installer-for-apple-silcon/ref/heads/main/install.sh
+| bash -s -- --version 2.20.0
 ```
 
 ## Why?
