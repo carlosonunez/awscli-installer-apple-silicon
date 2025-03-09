@@ -56,7 +56,7 @@ _leave_install_dir() {
 }
 
 _aws_cli_install_directory() {
-  pip show awscli |
+  pip3 show awscli |
     grep -E '^Location' |
     cut -f2 -d ':' |
     sed -E 's;lib.*;bin; ; s/^[ \t]+//'
@@ -175,7 +175,7 @@ awscli_bin_dir_not_in_path() {
 uninstall_pip_installed_awscli() {
   test -z "$(_aws_cli_install_directory)" && return 0
 
-  pip uninstall --yes awscli
+  pip3 uninstall --yes awscli
 }
 
 find_existing_awscli_installation() {
@@ -219,14 +219,13 @@ then
   log_error "You'll need to install Python before running this."
   exit 1
 fi
-
-version=$(get_arg_value "(-v|--version)" "$@")
-
 if ! pip_installed
 then
   log_info "Installing pip"
   install_pip
 fi
+
+version=$(get_arg_value "(-v|--version)" "$@")
 
 log_info "Fetching AWS CLI versions (this might take a few seconds)"
 versions=$(get_awscli_versions)
