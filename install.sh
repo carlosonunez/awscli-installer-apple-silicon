@@ -207,6 +207,12 @@ then
   exit 0
 fi
 
+if ! ensure_macos
+then
+  log_error "This script only works on macOS."
+  exit 1
+fi
+
 # This is unlikely, as macOS ships with some version of Python3 installed.
 if ! ensure_python3_installed
 then
