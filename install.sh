@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+WORKDIR="${PWD}/.work"
 usage() {
   cat <<-EOF
 $(basename "$0") [-v|--version]
@@ -26,7 +27,7 @@ EOF
   reset='\033[m'
   color_code="$(grep -E "^${1,,}" <<< "$colors" | cut -f2 -d '=' | tr -d "'")"
   test -z "$color_code" && color_code=''
-  echo -en "${color_code}[${2^^}]:${reset} ${*:3}"
+  echo -en "${color_code}[${2^^}]:${reset} ${*:3}\n"
 }
 
 log_info() {
@@ -88,12 +89,23 @@ get_awscli_versions() {
   grep '"refs/tags/2.' <<< "$body" |
     cut -f2 -d ':' |
     awk -F '/' '{print $NF}' |
-    tr -dc '0-9.\n'
+    tr -dc '0-9.\n' |
+    sort
 }
 
 confirm_version_valid() {
-  test "${1,,}" == latest && return 0
+  test -z "$version" && return 0
   grep -Eiq "^$1" <<< "$2"
+}
+
+download_release_at_version() {
+  test -d "$WORKDIR" || mkdir -p "$WORKDIR"
+  curl -sSLo "$WORKDIR/awscli.tar.gz" "https://github.com/aws/aws-cli/archive/refs/tags/$1.tar.gz"
+}
+
+clean() {
+  test -n "$KEEP_WORKDIR" && { log_warn "Keeping work directory, as requested"; return 0; }
+  rm -rf "$WORKDIR"
 }
 
 if help_requested "$@"
@@ -103,7 +115,6 @@ then
 fi
 
 version=$(get_arg_value "(-v|--version)" "$@")
-test -z "$version" && version=latest
 versions=$(get_awscli_versions)
 if ! confirm_version_valid "$version" "$versions"
 then
@@ -111,3 +122,7 @@ then
 https://github.com/aws/aws-cli/tags"
   exit 1
 fi
+test -z "$version" && version=$(head -1 <<< "$versions")
+log_info "Downloading AWS CLI v$version"
+download_release_at_version "$version"
+trap 'rc=$?; clean; exit $rc' INT HUP EXIT
