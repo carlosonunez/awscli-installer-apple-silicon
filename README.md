@@ -3,17 +3,13 @@
 Install the AWS CLI without package managers on Apple Silicon Macs.
 
 ```sh
-curl
-https://raw.githubusercontent.com/carlosonunez/aws-cli-installer-for-apple-silcon/ref/heads/main/install.sh
-| bash
+curl https://raw.githubusercontent.com/carlosonunez/awscli-installer-apple-silicon/refs/heads/main/install.sh | bash
 ```
 
 You can also install a specific version of the AWS CLI, if you'd like:
 
 ```sh
-curl
-https://raw.githubusercontent.com/carlosonunez/aws-cli-installer-for-apple-silcon/ref/heads/main/install.sh
-| bash -s -- --version 2.20.0
+curl https://raw.githubusercontent.com/carlosonunez/awscli-installer-apple-silcon/ref/heads/main/install.sh | bash -s -- --version 2.20.0
 ```
 
 ## Why?
