@@ -29,3 +29,9 @@ This script gives people a clean way of installing the AWS CLI without
 relying on package managers. This is ideal for endpoint device admins
 who don't use Homebrew for fleet-based installations or people who
 prefer to install their packages without package managers.
+
+## Tradeoffs
+
+- **EKS**: You'll need to install the AWS IAM Authenticator yourself. You can
+  find them
+  [here](https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/)
